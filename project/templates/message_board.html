@@ -1,0 +1,82 @@
+<html>
+
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+
+   <body>
+      <h1> Hi {{ user_name }}! This is your Message Board. Welcome. </h1>
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Trulli" width="100" height="66">
+
+   <h1> Send to: </h1>
+<form action = "http://localhost:5000//new_message" method = "POST" 
+         enctype = "multipart/form-data">
+  <label for="reciever_name">Reciever name</label><br>
+  <input type="message" id="reciever_name" name="reciever_name" value="fermi"><br>
+  <label for="message">Message:</label><br>
+  <input type="message" id="message" name="message" value="How are you doing today"><br><br> 
+  <label for="message_type">Message type:</label><br>
+  <input type="message_type" id="message_type" name="message_type" value="text"><br><br> 
+
+  <input type="submit" value="Submit">
+</form> 
+
+   </body>
+   <body>
+      <h2> Messages (incoming + outgoing) </h2>
+
+      <table>
+      <tr>
+         <th>Sent/Recieved </th>
+         <th>Name</th>
+         <th>Language</th>
+         <th>Message Type</th>
+         <th>Message</th>
+      {% for prefix, other_name, other_language, message_type, message in messages %}
+         <tr>
+         <td> {{ prefix }} </td>
+         <td> {{ other_name }} </td>
+         <td> {{ other_language }} </td>
+         <td> {{ message_type }} </td>
+         {% if message_type == 'text' %}
+            <td>{{ message }}</td>
+         {% else %}
+            {% if message_type == 'audio' %}
+               <p>
+               <td>
+               <audio controls>
+                  <source src="{{ url_for('static', filename=message) }}" type="audio/mpeg">
+               </audio>
+               </td>
+               </p>
+            {% else %}
+               <td>
+               <video width="320" height="240" controls>
+                  <source src="{{ url_for('static', filename=message) }}" type="video/mp4">
+                  Your browser does not support the video tag.
+               </video>
+            </td>
+         </tr>
+         </tr>
+            {% endif %}
+         {% endif %}
+      {% endfor %}
+   </table>
+   </body>
+</html>
