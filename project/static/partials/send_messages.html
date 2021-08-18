@@ -1,27 +1,21 @@
-<html>
-   <body>
-      <form action = "http://localhost:5000/uploader" method = "POST" 
-         enctype = "multipart/form-data">
-         <input type = "file" name = "file" />
-         <input type = "submit"/>
-      </form>   
-   </body>
-   <body>
-   Welcome user!: {{ sender_name }}
-   </body>
 
-<h1> Send Message to: </h1>
-<form action = "http://localhost:5000//new_message" method = "POST"
+<form action="http://localhost:5000/user_redirect">
+    <input type="submit" value="Messages" />
+</form>
+
+
+<h1> Send to: </h1>
+<form action = "http://localhost:5000//new_message" method = "POST" 
          enctype = "multipart/form-data">
   <label for="reciever_name">Reciever name</label><br>
   <input type="message" id="reciever_name" name="reciever_name" value=""><br>
   <label for="message">Message:</label><br>
   <input type="message" id="message" name="message" value=""><br><br>
   <label for="message_type">Message type:</label><br>
-  <input type="message_type" id="message_type" name="message_type" value="text"><br><br>
+  <input type="message_type" id="message_type" name="message_type" value="text"><br><br> 
 
   <input type="submit" value="Submit">
-</form>
+</form> 
 
 
 
@@ -131,7 +125,7 @@
                 <button>Record</button>
             </h2>
 
-            <div style="text-align: center;">
+            <div style="text-align: center; display: none;">
                 <button id="save-to-disk">Download to local</button>
                 <button id="open-new-tab">Open New Tab</button>
                 <button id="upload-to-server">Post</button>
@@ -656,7 +650,7 @@
             }
 
             function saveToDiskOrOpenNewTab(recordRTC) {
-
+                callback("IN SAVE")
                 recordingDIV.querySelector('#save-to-disk').parentNode.style.display = 'block';
                 recordingDIV.querySelector('#save-to-disk').onclick = function() {
                     if(!recordRTC) return alert('No recording found.');
@@ -669,7 +663,7 @@
 
                     window.open(recordRTC.toURL());
                 };
-
+                callback("IN SAVE!")
                 recordingDIV.querySelector('#upload-to-server').disabled = false;
                 recordingDIV.querySelector('#upload-to-server').onclick = function() {
                     if(!recordRTC) return alert('No recording found.');
@@ -702,14 +696,14 @@
                 } else {
                     fileName += '.webm';
                 }
-                var curr_url = location.href.replace('/', '/');
-                var receiver = curr_url.split('/')[-1];
+
                 // create FormData
                 var formData = new FormData();
                 formData.append(fileType + '-filename', fileName);
                 formData.append(fileType + '-blob', blob);
-                formData.append(fileType + '-url', curr_url);
+                formData.append(fileType + '-sender', "Fermi")
 
+                callback('Uploading ' + fileType + ' recording to server.');
 
                 makeXMLHttpRequest('save', formData, function(progress) {
                     if (progress !== 'upload-ended') {
@@ -718,6 +712,9 @@
                     }
 
                     var initialURL = location.href.replace(location.href.split('/').pop(), '') + 'uploads/';
+
+                    callback('ended', initialURL + fileName);
+
                     // to make sure we can delete as soon as visitor leaves
                     listOfFilesUploaded.push(initialURL + fileName);
                 });
@@ -797,9 +794,13 @@
             };
         </script>
 
+
+
     </article>
 
 
 
+
 </body>
+
 </html>

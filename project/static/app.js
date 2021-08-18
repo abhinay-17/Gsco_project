@@ -6,6 +6,10 @@ myApp.config(function ($routeProvider) {
       templateUrl: 'static/partials/home.html',
       access: {restricted: false}
     })
+    .when('/create_message', {
+      templateUrl: 'static/partials/send_messages.html',
+      access: {restricted: true}
+    })
     .when('/login', {
       templateUrl: 'static/partials/login.html',
       controller: 'loginController',

@@ -16,8 +16,8 @@ from deep_translator import GoogleTranslator
 from text_to_speech import speak
 from gtts import gTTS
 
-asr_model = "/home/sooos/bothhand/project/translate/pretrained_models/asr_deepspeech/deepspeech-0.9.3-models.pbmm"
-asr_scorer = "/home/sooos/bothhand/project/translate/pretrained_models/asr_deepspeech/deepspeech-0.9.3-models.scorer"
+asr_model = "./translate/pretrained_models/asr_deepspeech/deepspeech-0.9.3-models.pbmm"
+asr_scorer = "./translate/pretrained_models/asr_deepspeech/deepspeech-0.9.3-models.scorer"
 
 pid = os.getpid()
 temp_folder = "temp_"+ str(pid) + "/"
@@ -159,5 +159,6 @@ if __name__ == '__main__':
 
 
 	final = temp_folder+"final.mp4"
+
 	br.create_final_video(original_video=video_input, audio=final_audio, final=final)
 

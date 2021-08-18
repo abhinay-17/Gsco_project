@@ -21,7 +21,7 @@ tr:nth-child(even) {
 </head>
 
    <body>
-      <h1> Hi {{ user_name }}! This is your Message Board. Welcome. </h1>
+      <h1> Hi {{ sender_name }}! This is your Message Board. Welcome. </h1>
       <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Trulli" width="100" height="66">
 
    <h1> Send to: </h1>
@@ -30,7 +30,7 @@ tr:nth-child(even) {
   <label for="reciever_name">Reciever name</label><br>
   <input type="message" id="reciever_name" name="reciever_name" value="fermi"><br>
   <label for="message">Message:</label><br>
-  <input type="message" id="message" name="message" value="How are you doing today"><br><br> 
+  <input type="message" id="message" name="message" value=""><br><br>
   <label for="message_type">Message type:</label><br>
   <input type="message_type" id="message_type" name="message_type" value="text"><br><br> 
 
@@ -39,43 +39,67 @@ tr:nth-child(even) {
 
    </body>
    <body>
-      <h2> Messages (incoming + outgoing) </h2>
+      <h2> Messages (incoming + outgoing, sorted by date) </h2>
 
       <table>
       <tr>
+         <th>Date </th>
          <th>Sent/Recieved </th>
          <th>Name</th>
          <th>Language</th>
          <th>Message Type</th>
-         <th>Message</th>
-      {% for prefix, other_name, other_language, message_type, message in messages %}
-         <tr>
+         <th>Original Message</th>
+         <th>Translated Message</th>
+      </tr>
+      {% for date_str, prefix, other_name, other_language, message_type, orig_message, trans_message in messages %}
+      <tr>
+         <td> {{ date_str }} </td>
          <td> {{ prefix }} </td>
          <td> {{ other_name }} </td>
          <td> {{ other_language }} </td>
          <td> {{ message_type }} </td>
          {% if message_type == 'text' %}
-            <td>{{ message }}</td>
+            <td>{{ orig_message }}</td>
          {% else %}
             {% if message_type == 'audio' %}
                <p>
                <td>
                <audio controls>
-                  <source src="{{ url_for('static', filename=message) }}" type="audio/mpeg">
+                  <source src="{{ url_for('static', filename=orig_message) }}" type="audio/mpeg">
                </audio>
                </td>
                </p>
             {% else %}
                <td>
                <video width="320" height="240" controls>
-                  <source src="{{ url_for('static', filename=message) }}" type="video/mp4">
+                  <source src="{{ url_for('static', filename=orig_message) }}" type="video/mp4">
                   Your browser does not support the video tag.
                </video>
             </td>
-         </tr>
-         </tr>
             {% endif %}
          {% endif %}
+
+         {% if message_type == 'text' %}
+            <td>{{ trans_message }}</td>
+         {% else %}
+            {% if message_type == 'audio' %}
+               <p>
+               <td>
+               <audio controls>
+                  <source src="{{ url_for('static', filename=trans_message) }}" type="audio/mpeg">
+               </audio>
+               </td>
+               </p>
+            {% else %}
+               <td>
+               <video width="320" height="240" controls>
+                  <source src="{{ url_for('static', filename=trans_message) }}" type="video/mp4">
+                  Your browser does not support the video tag.
+               </video>
+            </td>
+            {% endif %}
+         {% endif %}
+      </tr>
       {% endfor %}
    </table>
    </body>
