@@ -13,5 +13,3 @@ Much of the website design was inspired by blogs, templates, and github repos.
 # How to Run	
 
 >Go into the head directory and run `python manage.py create_db` in a terminal. Then run `python manage.py runserver`. Go to http://localhost:5000/. Create a user and then send a new message to a different user. 
-
-

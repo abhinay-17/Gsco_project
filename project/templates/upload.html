@@ -7,25 +7,14 @@
       </form>   
    </body>
    <body>
-   Welcome user!: {{ sender_name }}
+   Welcome user: {{ sender_name }}
    </body>
 
-<h1> Send Message to: </h1>
-<form action = "http://localhost:5000//new_message" method = "POST"
-         enctype = "multipart/form-data">
-  <label for="reciever_name">Reciever name</label><br>
-  <input type="message" id="reciever_name" name="reciever_name" value=""><br>
-  <label for="message">Message:</label><br>
-  <input type="message" id="message" name="message" value=""><br><br>
-  <label for="message_type">Message type:</label><br>
-  <input type="message_type" id="message_type" name="message_type" value="text"><br><br>
+   <form action="http://localhost:5000/">
+    <input type="submit" value="Home" />
+   </form>
 
-  <input type="submit" value="Submit">
-</form>
-
-
-
-    <style>
+   <style>
     audio {
         vertical-align: bottom;
         width: 10em;
@@ -121,11 +110,7 @@
                 </select>
 
                <select class="reciever_name">
-                    <option>Pogba</option>
-                    <option>Fermi</option>
-                    <option>John</option>
-                    <option>Mary</option>
-                    <option>Bary</option>
+                    <option>{{ receiver_name }}</option>
                 </select>
 
                 <button>Record</button>
@@ -135,7 +120,6 @@
                 <button id="save-to-disk">Download to local</button>
                 <button id="open-new-tab">Open New Tab</button>
                 <button id="upload-to-server">Post</button>
-
             </div>
 
             <br>

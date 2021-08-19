@@ -3,7 +3,7 @@
 import os, glob
 import copy
 
-from flask import Flask, session, request, render_template
+from flask import Flask, session, request, render_template, redirect
 # from flask_session import Session 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -64,19 +64,12 @@ def index():
 	global msgs
 	return app.send_static_file('index.html')
 
-@app.route('/upload/<receiver_name>')
-def upload_file(receiver_name):
-	global msgs
-	if session.get('logged_in'):
-		email 			= session.get('user_email')
-		send_user 		= User.query.filter_by(email=email).first()
-		receive_user 	= User.query.filter_by(email=receiver_name).first()
-		if receive_user == None:
-			return "No receiver called " + receiver_name + " exists"
-		# end-tab
-		return render_template('upload.html', sender_name=email, receiver_name=receiver_name)
-	else:
-		return "<p>Not logged in.</p> <a href=\"http://localhost:5000/#/login\">Log-In</a> <p></p> <a href=\"http://localhost:5000/#/register\">Register</a>"
+@app.route('/file_upload/<receiver_name>', methods = ['POST'])
+def uploader_file(receiver_name):
+	if request.method == 'POST':
+		f = request.files['file']
+		f.save(secure_filename(f.filename + "_" + receiver_name))
+		return 'file uploaded successfully'
 
 
 @app.route('/show_users')
@@ -92,14 +85,6 @@ def get_email():
 		return session.get('user_email')
 	else:
 		return "no one logged in!"
-
-@app.route('/uploader/<receiver_name>', methods = ['POST'])
-def uploader_file(receiver_name):
-	if request.method == 'POST':
-		f = request.files['file']
-		f.save(secure_filename(f.filename + "_" + receiver_name))
-		return 'file uploaded successfully'
-
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -150,6 +135,42 @@ def status():
 			return jsonify({'status': True})
 	else:
 		return jsonify({'status': False})
+
+@app.route('/pre_upload/')
+def pre_upload():
+	global msgs
+	if session.get('logged_in'):
+		email 			= session.get('user_email')
+		return render_template('pre_upload.html', sender_name=email)
+	else:
+		return render_template('not_logged_in.html')
+
+@app.route('/med_upload', methods=['POST'])
+def med_upload():
+	json_data = request.json
+	print(request)
+	receiver_name = request.form['receiver_name']
+	print(receiver_name)
+	return redirect('http://localhost:5000/upload/' + str(receiver_name))
+
+
+@app.route('/upload/<receiver_name>')
+def upload_file(receiver_name):
+	global msgs
+	if session.get('logged_in'):
+		email 			= session.get('user_email')
+		send_user 		= User.query.filter_by(email=email).first()
+		receive_user 	= User.query.filter_by(email=receiver_name).first()
+		if receive_user == None:
+			return "<p>No receiver called " + receiver_name + " exists" + " </p> <a href=\"http://localhost:5000\">Home</a>"
+		# end-tab
+		return render_template('upload.html', sender_name=email, receiver_name=receiver_name)
+	else:
+		return "<p>Not logged in.</p> " \
+			   "<a href=\"http://localhost:5000/#/login\">Log-In</a> <p></p> " \
+			   "<a href=\"http://localhost:5000/#/register\">Register</a>"
+
+
 
 @app.route('/user_redirect', methods=['GET'])
 def user_board():
