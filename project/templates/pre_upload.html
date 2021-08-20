@@ -1,0 +1,32 @@
+<html>
+   <body>
+   {{ sender_name }}
+   </body>
+
+<h1> Send Text Message to: </h1>
+<form action = "http://localhost:5000//new_message" method = "POST"
+         enctype = "multipart/form-data">
+  <label for="receiver_name">Receiver name</label><br>
+  <input type="message" id="receiver_name" name="receiver_name" value=""><br>
+  <label for="message">Message:</label><br>
+  <input type="message" id="message" name="message" value=""><br><br>
+
+  <input type="submit" value="Submit">
+</form>
+
+<h1> Send Video/Audio Message to: </h1>
+<form action = "http://localhost:5000//med_upload" method = "POST"
+         enctype = "multipart/form-data">
+  <label for="receiver_name">Receiver name</label><br>
+  <input type="message" id="receiver_name" name="receiver_name" value=""><br>
+  <input type="submit" value="Submit">
+
+</form>
+
+<p></p>
+
+<form action="http://localhost:5000/#/">
+    <input type="submit" value="Home" />
+</form>
+
+</html>
