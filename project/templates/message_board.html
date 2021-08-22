@@ -48,23 +48,20 @@ tr:nth-child(even) {
             <td>{{ orig_message }}</td>
          {% else %}
             {% if message_type == 'audio' %}
-               <p>
                <td>
                 <video controls width="250">
                     <source src="{{ url_for('static', filename=orig_message) }}"
                             type="video/webm">
-                    <source src="{{ url_for('static', filename=orig_message) }}"
-                            type="video/mp4">
                     Sorry, your browser doesn't support embedded videos.
                 </video>
                </td>
-               </p>
             {% else %}
                <td>
-               <video width="320" height="240" controls>
-                  <source src="{{ url_for('static', filename=orig_message) }}" type="video/webm">
-                  Your browser does not support the video tag.
-               </video>
+               <video controls width="250">
+                    <source src="{{ url_for('static', filename=orig_message) }}"
+                            type="video/webm">
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </td>
             {% endif %}
          {% endif %}
@@ -75,17 +72,20 @@ tr:nth-child(even) {
             {% if message_type == 'audio' %}
                <p>
                <td>
-               <audio controls>
-                  <source src="{{ url_for('static', filename=trans_message) }}" type="audio/mpeg">
-               </audio>
+               <video controls width="250">
+                    <source src="{{ url_for('static', filename=trans_message) }}"
+                            type="video/webm">
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
                </td>
                </p>
             {% else %}
                <td>
-               <video width="320" height="240" controls>
-                  <source src="{{ url_for('static', filename=trans_message) }}" type="video/mp4">
-                  Your browser does not support the video tag.
-               </video>
+               <video controls width="250">
+                    <source src="{{ url_for('static', filename=trans_message) }}"
+                            type="video/webm">
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </td>
             {% endif %}
          {% endif %}
