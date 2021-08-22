@@ -677,13 +677,13 @@
                     fileName += '.webm';
                 }
                 var curr_url = location.href.replace('/', '/');
-                var receiver = curr_url.split('/')[-1];
                 // create FormData
                 var formData = new FormData();
                 formData.append(fileType + '-filename', fileName);
                 formData.append(fileType + '-blob', blob);
                 formData.append(fileType + '-url', curr_url);
 
+                 callback('Uploading ' + fileType + ' recording to server.');
 
                 makeXMLHttpRequest('save', formData, function(progress) {
                     if (progress !== 'upload-ended') {

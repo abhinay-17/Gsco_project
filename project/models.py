@@ -50,29 +50,35 @@ class Message(db.Model):
 	sender_lan 			= db.Column(db.Integer, nullable=False)
 	receiver_lan 		= db.Column(db.Integer, nullable=False)
 	message 			= db.Column(db.String(255), unique=True, nullable=False)
+	type 				= db.Column(db.String(255), unique=True, nullable=False)
 	created_date 		= db.Column(db.DateTime, nullable=False)
 	date_str   			= db.Column(db.String(255), nullable=False)
 
 
-	def __init__(self, sender_email, receiver_email, sender_lan, receiver_lan, suffix='.txt'):
+	def __init__(self, sender_email, receiver_email, sender_lan, receiver_lan, type='text'):
 		self.sender_email 		= sender_email
 		self.receiver_email 	= receiver_email
 		self.sender_lan 		= sender_lan
 		self.receiver_lan 		= receiver_lan
 		self.created_date 		= datetime.datetime.now()
 		self.date_str 			= self.created_date.strftime("%Y_%m_%d_%H_%M_%S")
-		if not os.path.isdir("./messages_db"): os.mkdir("./messages_db")
-		message_loc = "./messages_db/" + "msg_" + self.date_str + "_" + sender_email + "_" + receiver_email + "_orig" + suffix
+		self.type 				= type
+		suffix					= 	'.txt' if type == 'text' else '.webm'
+		if not os.path.isdir("./project/static/messages/"): os.mkdir("./project/static/messages/")
+		message_loc 			= "./project/static/messages/" + "msg_" + self.type + "_" + self.date_str + "_" + sender_email + "_" + receiver_email + "_orig" + suffix
 		self.message 			= message_loc
 
 	def is_text(self):
-		return True if ".txt" in self.message else False
+		return self.type == 'text'
 
 	def is_audio(self):
-		return True if ".wav" in self.message else False
+		return self.type == 'audio'
 
 	def is_video(self):
-		return True if ".webm" in self.message else False
+		return self.type == 'video'
+
+	def get_type(self):
+		return self.type
 
 	def get_orig_file_name(self):
 		return self.message

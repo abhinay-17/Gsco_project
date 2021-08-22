@@ -1,18 +1,32 @@
+#standard import
 import os, sys
 import ffmpeg
+import librosa
+from moviepy.editor import *
+import moviepy.editor as mp
 
+#split silence thing
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+#translation (google at back)
 from deep_translator import GoogleTranslator
+
+#tts from text-to-speech
 from text_to_speech import speak
+from gtts import gTTS
+
 
 
 def read_audio(video_file, audio_file):
-	'''
-	provide filenames with extensions
-	'''
-	stream = ffmpeg.input(video_file)
-	stream = ffmpeg.output(stream, audio_file)
-	ffmpeg.run(stream)
+	# stream = ffmpeg.input(video_file)
+	# stream = ffmpeg.output(stream, audio_file)
+	# ffmpeg.run(stream)
 
+	os.system("ffmpeg -i \"" + video_file + "\" -f wav -bitexact -acodec pcm_s16le -ar 16000 -ac 1 \"" + audio_file + "\"")
+
+def wav_to_webm(wav_file, webm_file):
+	os.system("ffmpeg -i \"" + wav_file + "\" -acodec libvorbis -aq 5 -ac 2 -qmax 25 " + webm_file)
 
 def change_audio_speed(file1, file2, outfile):
 	DURATION_RATIO = 0.001
@@ -28,7 +42,10 @@ def change_audio_speed(file1, file2, outfile):
 		ratio = DURATION_RATIO
 	# end-tab
 	ratio = str(ratio)
-	os.system('ffmpeg -i ' + file1 + ' -filter:a "atempo=' + ratio + '" -vn ' + outfile)
+	tmp_file = "tmp." + file1.split(".")[-1]
+	os.system('ffmpeg -i ' + file1 + ' -filter:a "atempo=' + ratio + '" -vn ' + tmp_file)
+	if os.path.isfile(outfile): os.system('rm ' + outfile)
+	os.system('mv ' + tmp_file + ' ' + outfile)
 
 class sp2sp_core():
 
@@ -60,7 +77,7 @@ class sp2sp_core():
 		target = GoogleTranslator(source=slang, target=tlang).translate(source)
 		return target
 
-	def create_final_video(self, original_video, audio, final):
+	def create_final_video(self, original_video, final, audio):
 		vclip = VideoFileClip(original_video)
 		vdur = vclip.duration
 		aclip = AudioFileClip(audio)
@@ -91,13 +108,13 @@ if __name__ == '__main__':
 	given_out 	=	sys.argv[2]
 	INPUT_LANG 	= 	'en' 		if len(sys.argv) < 4 else sys.argv[3]
 	OUTPUT_LANG = 	'fr' 		if len(sys.argv) < 5 else sys.argv[4]
-	IS_VIDEO 	= 	0 			if len(sys.argv) < 6 else int(sys.argv[5])
-
+	IS_REAL_VIDEO = 0 			if len(sys.argv) < 6 else int(sys.argv[5])
 
 	""" RUN PYAUDIO ANALYSIS TO CREATE CHUNKS"""
 	USE_SPLITTER 	= 0
 	SPLITTER_WEIGHT = 0.3	# between 0 and 1
 	SPLITTER_WINDOW	= 30 	# in seconds
+
 
 	cmd = "python ./pyAudioAnalysis/pyAudioAnalysis/audioAnalysis.py " + \
 		  "silenceRemoval -i ./new-home-in-the-stars-16k.wav -s " + \
@@ -114,14 +131,13 @@ if __name__ == '__main__':
 		sys.exit()
 	# end-tab
 
-	if IS_VIDEO:
-		audio_input = os.path.basename(given_input).split(".")[0] + ".wav"
-		audio_out = os.path.basename(given_out).split(".")[0] + ".wav"
-		read_audio(given_input, audio_input)
-	else:
-		audio_input = given_input
-		audio_out = given_out
-	# end-tab
+	print("IN AND OUT")
+	print(given_input)
+	print(given_out)
+
+	audio_input = os.path.basename(given_input).split(".")[0] + ".wav"
+	audio_out = os.path.basename(given_out).split(".")[0] + ".wav"
+	read_audio(given_input, audio_input)
 
 	text_from_speech = sp2sp_handler.asr_deepspeech(model=asr_model, scorer=asr_scorer, audio=audio_input)
 	print("Transrciption: ")
@@ -134,8 +150,12 @@ if __name__ == '__main__':
 
 	sp2sp_handler.txt_to_sp(out_file=audio_out, text=p,lang=OUTPUT_LANG)
 	change_audio_speed(file1=audio_out, file2=audio_input, outfile=audio_out)
-	if IS_VIDEO:
-		sp2sp_handler.handle_video(input_video=given_input, output_video=given_out, audio_file=audio_out)
+	if not IS_REAL_VIDEO:
+		wav_to_webm(audio_out, given_out)
+		os.system("rm " + audio_input)
+		os.system("rm " + audio_out)
+	else:
+		sp2sp_handler.create_final_video(original_video=given_input, final=given_out, audio=audio_out)
 		os.system("rm " + audio_input)
 		os.system("rm " + audio_out)
 	# end-tab

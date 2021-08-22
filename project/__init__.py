@@ -192,82 +192,28 @@ def user_board():
 			receiver_name 	= msg.get_receiver_email()
 			sender_lan		= msg.get_sender_language()
 			receiver_lan 	= msg.get_receiver_language()
-			message_type	= 	'text' if '.txt' in msg_loc else \
-								'audio' if '.wav' in msg_loc else \
-								'video'
+			message_type	= msg.get_type()
 			date_str		= msg.get_datetime_str()
-			orig_message 	= open(msg_loc, 'r').read()
-			trans_message	= open(trans_msg_loc, 'r').read()
+			orig_message 	= "." + msg_loc.split("static")[-1] 		if message_type != 'text' else open(msg_loc, 'r').read()
+			trans_message 	= "." + trans_msg_loc.split("static")[-1] 	if message_type != 'text' else open(trans_msg_loc, 'r').read()
 			all_msgs 		+= [ tuple([ date_str, "SENT", receiver_name, receiver_lan, message_type, orig_message, trans_message ]) ]
 		# end-tab
 		for msg in received_msgs:
-			msg_loc = msg.get_orig_file_name()
-			trans_msg_loc = msg.get_trans_file_name()
-			sender_name = msg.get_sender_email()
-			receiver_name = msg.get_receiver_email()
-			sender_lan = msg.get_sender_language()
-			receiver_lan = msg.get_receiver_language()
-			message_type =  'text' if '.txt' in msg_loc else \
-							'audio' if '.wav' in msg_loc else \
-							'video'
-			date_str = msg.get_datetime_str()
-			orig_message = open(msg_loc, 'r').read()
-			trans_message = open(trans_msg_loc, 'r').read()
-			all_msgs += [ tuple([date_str, "RECEIVED", receiver_name, receiver_lan, message_type, orig_message, trans_message]) ]
+			msg_loc 		= msg.get_orig_file_name()
+			trans_msg_loc 	= msg.get_trans_file_name()
+			sender_name 	= msg.get_sender_email()
+			receiver_name 	= msg.get_receiver_email()
+			sender_lan 		= msg.get_sender_language()
+			receiver_lan 	= msg.get_receiver_language()
+			message_type 	= msg.get_type()
+			date_str 		= msg.get_datetime_str()
+			orig_message 	= msg_loc if message_type != 'text' else open(msg_loc, 'r').read()
+			trans_message 	= trans_msg_loc if message_type != 'text' else open(trans_msg_loc, 'r').read()
+			all_msgs 		+= [ tuple([date_str, "RECEIVED", receiver_name, receiver_lan, message_type, orig_message, trans_message]) ]
 		# end-tab
-		"""
-		for msg in outgoing_msgs:
-			(sender_id, reciever_id, sender_loc, reciever_loc, message_type, message) = msg
-
-			sender = User.query.filter_by(id=sender_id).first()
-			sender_name = sender.email
-			sender_language = sender.language
-
-			reciever = User.query.filter_by(id=reciever_id).first()
-			reciever_name = reciever.email
-			reciever_language = reciever.language
-			print("sender_language", sender_language)
-			reciever_name = email
-			message_translated = GoogleTranslator(source=sender_language, target=reciever_language).translate(message)
-			all_msgs += [ tuple([ "SENT: ", sender_name, sender_language, message_type, message ]) ]
-			all_msgs += [ tuple([ "SENT: ", sender_name, reciever_language, message_type, message_translated]) ]
-		# end-tab
-		"""
 		sorted(all_msgs, key=lambda k: k[0])
 		print(all_msgs)
-
-		"""
-		messages = glob.glob("./project/static/messages/*")
-		print("messages", messages)
-		for message in messages:
-
-			path = "./messages/" + os.path.basename(message)
-			print(path)
-			if path.split(".")[-1] == "wav":
-
-				message_type = "audio"
-				message_translated = message.split(".")[0] + "_translated.wav"
-				path_translated = "messages/" + os.path.basename(message).split(".")[0] + "_translated.wav"
-				print(path)
-				print("path_trans", path_translated)
-				print("message trans", message_translated)
-
-				audio_translate(message, message_translated,"en","de")
-
-				all_msgs += [tuple([ "SENT:     ", "Pogba", "en", message_type, path ])]
-				all_msgs += [tuple([ "SENT:     ", "Pogba", "de", message_type, path_translated ])]
-			if path.split(".")[-1] == "webm":
-#                all_msgs += [tuple([ "SENT:     ", "Pogba", "de", message_type, path ])]
-				message_type = "video"
-				all_msgs += [tuple([ "SENT:     ", "Pogba", "de", message_type, path ])]
-#            print("I am in ")
-#            all_msgs += [tuple([ "SENT:     ", "Pogba", "de", message_type, path ])]
-#            all_msgs += [tuple([ "SENT:     ", "Pogba", "de", message_type, path_translated ])]            
-
-		"""
 		return render_template('message_board.html', messages=all_msgs, user_name=user.email)
-		# return "Your message board " + str(user.id) +  ": " + "<br>Incoming: " + str(incoming_msgs) + "<br>Outgoing: " + str(outgoing_msgs)
-		# return render_template('upload.html')
 	# end-tab
 	else:
 		return "<p>Not Logged In</p> <a href=\"http://localhost:5000/#/login\">Log-In</a> <p></p> <a href=\"http://localhost:5000/#/register\">Register</a>"
@@ -400,8 +346,14 @@ def handle_form():
 	print(files)
 
 	values = request.values
+	IS_AUDIO = 0
 	if 'audio-url' in values.keys():
 		url = values['audio-url']
+		s1 = "ffmpeg - i file.webm - vn - acodec copy " + "file.opus"
+		s2 = "ffmpeg - i file.opus file.wav"
+		# os.system(s1)
+		# os.system(s2)
+		IS_AUDIO = 1
 	else:
 		url = values['video-url']
 	# end-tab
@@ -419,7 +371,7 @@ def handle_form():
 		sender_lan=sender_language,
 		receiver_email=receiver_name,
 		receiver_lan=receiver_language,
-		suffix='.wav'
+		type='audio' if IS_AUDIO else 'video'
 	)
 	status = '<p>Message sent!</p> <a href=\"http://localhost:5000/#/\">Home</a>'
 	try:
@@ -435,9 +387,22 @@ def handle_form():
 		vfile = request.files["audio-blob"]
 		print(vfile.filename)
 		vfile.save(vfile.filename)
-		os.system("mv " + vfile.filename + " " + msg_loc)
-		trans_msg_loc = msg.get_trans_file_name()
-		os.system("python ./single_file_translation.py " + msg_loc + " " + trans_msg_loc + " " + sender_language + " " + receiver_language + " 0")
+		msg_webm = copy.deepcopy(msg_loc)
+		if msg_webm[0] == '.':
+			msg_webm = '.' + msg_webm.split('.')[1] + ".webm"
+		else:
+			msg_webm = msg_webm.split('.')[0] + ".webm"
+		# end-tab
+		print(msg_loc)
+		os.system("cp " + vfile.filename + " " + msg_webm)
+		trans_msg_loc 	= msg.get_trans_file_name()
+		trans_msg_webm 	= copy.deepcopy(trans_msg_loc)
+		if trans_msg_webm[0] == '.':
+			trans_msg_webm = '.' + trans_msg_webm.split('.')[1] + '.webm'
+		else:
+			trans_msg_webm = trans_msg_webm.split('.')[0] + '.webm'
+		# end-tab
+		os.system("python ./single_file_translation.py " + msg_webm + " " + trans_msg_webm + " " + sender_language + " " + receiver_language + " 0")
 		db.session.close()
 		return status
 
