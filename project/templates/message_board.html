@@ -70,7 +70,6 @@ tr:nth-child(even) {
             <td>{{ trans_message }}</td>
          {% else %}
             {% if message_type == 'audio' %}
-               <p>
                <td>
                <video controls width="250">
                     <source src="{{ url_for('static', filename=trans_message) }}"
@@ -78,7 +77,6 @@ tr:nth-child(even) {
                     Sorry, your browser doesn't support embedded videos.
                 </video>
                </td>
-               </p>
             {% else %}
                <td>
                <video controls width="250">

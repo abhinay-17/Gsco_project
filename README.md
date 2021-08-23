@@ -20,21 +20,25 @@ efficiently communicate with one another using audio or visual records or simply
 # Website Layout and Design
 
 This project has a minimalistic design using `HTML`, `Flask`, `AnjularJS`, and of course `Python`.
-The user handling and session design were both built on using these resources. 
+The user handling and session design were both built on resources in the `Related Resources` section.
 
-![Alt text](imgs/speech_to_speech_website.png)
+![Website Architecture](imgs/speech_to_speech_website.png)
 
 
 # The Multilingual Database
 
+![Translation Pipeline](imgs/speech_to_speech_website.png)
+
 # Related Resources
 Much of the website design was inspired by blogs, templates, and github repos. 
 
-1. **SQL**: Users and Messages are stored in an SQL database. 
+1. **SQL-alchemy**: Users and Messages are stored in an SQL database and are managed using flask SQL alchemy.  
 2. **Flask**: Flask is used to the framework, with templates and controllers for webpages to be able to exploit Flask's 
 useful features as well as app management. 
-3. **anjularJS**: To handle functionalities for buttons, recording messages, etc. exploits [anjularJS](https://realpython.com/handling-user-authentication-with-angular-and-flask/). 
+3. **anjularJS**: To handle functionalities for buttons, recording messages, etc. exploits [**anjular**](https://realpython.com/handling-user-authentication-with-angular-and-flask/) [**JS**](https://github.com/realpython/flask-angular-auth).
 4. Mozilla [**DeepSpeech**](https://github.com/mozilla/DeepSpeech)
+5. **WebRTC**: To handle visual and audio recording. Handling recordings was done from [**RecordRTC.js**](https://github.com/muaz-khan/RecordRTC/blob/master/RecordRTC.js).
+
 
 
 # How to Run	
