@@ -9,25 +9,31 @@ Leveraging *Speech-to-Text* transcription systems (like `Mozilla Deepspeech`), *
 (like `Google Translate`), and finally *Text-to-Speech* spoken-word systems (like `Google TTS`), 
 we can readily translate both audio and visual files as well.
 
-### Language Preference on a Social or Networking Site
+##### Language Preference on a Social or Networking Site
 
 Using such systems, we build a website where users are easily able to message each other in their preferred language 
-and receive messages in their preferred language. As such, users of different linguistic heritages can easily and 
-efficiently communicate with one another using audio or visual records or simply text messages. 
+and receive messages in their preferred language. 
+As such, users of different linguistic heritages can easily and efficiently communicate with one another using audio 
+or visual records or simply text messages. 
+They can "check" their messages by going to their message board, where all the messages they sent are represented, ordered by date. 
+The messages appear in both the language of the sender and the receiver. 
 
-### Multilingual Representations  
+##### Multilingual Representations  
 
-# Website Layout and Design
+In the backend (check `Multilingual Database`), we have a database that stores the messages of the users. 
+The database is written in SQL, using flask SQL alchemy. 
+We store both the original video, audio, or text and its accompanying translated pair.
+At the moment of creation, brought by POST request, the translation occurs following the `Translation Pipeline` shown 
+in the `Multilingual Database` section.
 
-This project has a minimalistic design using `HTML`, `Flask`, `AnjularJS`, and of course `Python`.
-The user handling and session design were both built on resources in the `Related Resources` section.
+# How to Run	
 
-![Website Architecture](imgs/speech_to_speech_website.png)
+>Clone this repo and run `cd ./gsoc-sp2sp-net/`, then `python setup_with_py.py` in a terminal. 
+Then run `python full_clean.py`. Go to http://localhost:5000/. 
+Create two users with different languages and then send a message from one to the other. 
+Then check the message board of either user. Check out `manage.py`.
 
 
-# The Multilingual Database
-
-![Translation Pipeline](imgs/speech_to_speech_website.png)
 
 # Related Resources
 Much of the website design was inspired by blogs, templates, and github repos. 
@@ -39,8 +45,19 @@ useful features as well as app management.
 4. Mozilla [**DeepSpeech**](https://github.com/mozilla/DeepSpeech)
 5. **WebRTC**: To handle visual and audio recording. Handling recordings was done from [**RecordRTC.js**](https://github.com/muaz-khan/RecordRTC/blob/master/RecordRTC.js).
 
+# Website Layout and Design
+
+This project has a minimalistic design using `HTML`, `Flask`, `AnjularJS`, and of course `Python`.
+The user handling and session design were both built on resources in the `Related Resources` section.
+
+![Website Architecture](imgs/speech_to_speech_website.png)
 
 
-# How to Run	
+# The Multilingual Database
 
->Go into the head directory and run `python manage.py create_db` in a terminal. Then run `python manage.py runserver`. Go to http://localhost:5000/. Create a user and then send a new message to a different user. 
+The database is written in SQL, using flask SQL alchemy. It stores the path to the files that have the original
+content. The naming of the files has the following form: year_month_date_hour_minute_second_messagetype_sendername_receivername_ 
+
+## Translation Pipeline
+
+![Translation Pipeline](imgs/speech_to_speech_framework.png)
