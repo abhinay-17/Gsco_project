@@ -1,7 +1,7 @@
 # Speech to Speech Translation to Facilitate Multilingual File Storage and User Networking
 
-This project is a simple (and unsecure) prototypical message board where files are stored using a `multilingual database`, 
-written using SQL. 
+This project is a simple (and unsecure) prototypical message board for a *multilingual* networking site, 
+for which files are stored using a `multilingual database`. 
 Using available packages (check `Related Resources`), we implement a simple translation system 
 (check `Multilingual Database`) for translating text, audio, and video files. 
 While text translation systems are readily available, audio translation systems are generally not. 
@@ -57,7 +57,7 @@ The user handling and session design were both built on resources in the `Relate
 # The Multilingual Database
 
 The database is written in SQL, using flask SQL alchemy. It stores the path to the files that have the original
-content. The naming of the files has the following form: `year`_`month`_`date`_`hour`_`minute`_`second`_`messagetype`_`sendername`_`receivername`_orig.`suffix` 
+content. The naming of the files has the following form: *year*\_*month*\_*date*\_*hour*\_*minute*\_*second*\_`messagetype`\_`sendername`\_`receivername`\_orig.*suffix* 
 where `messagetype` is `text`, `audio`, or `video`, `sendername` is the user name of the sender, 
 `receivername` is the name of the receiver, and `suffix` is `.txt` for `text` and `.webm` for `audio` and `visual`. 
 Translated versions have the same form, but replace `orig` with `senderlanguage_to_receiverlanguage` 
