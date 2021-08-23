@@ -26,6 +26,7 @@ We store both the original video, audio, or text and its accompanying translated
 At the moment of creation, brought by POST request, the translation occurs following the `Translation Pipeline` shown 
 in the `Multilingual Database` section.
 
+
 # How to Run	
 
 >Clone this repo and run `cd ./gsoc-sp2sp-net/`, then `python setup_with_py.py` in a terminal. 
@@ -56,7 +57,14 @@ The user handling and session design were both built on resources in the `Relate
 # The Multilingual Database
 
 The database is written in SQL, using flask SQL alchemy. It stores the path to the files that have the original
-content. The naming of the files has the following form: year_month_date_hour_minute_second_messagetype_sendername_receivername_ 
+content. The naming of the files has the following form: `year`_`month`_`date`_`hour`_`minute`_`second`_`messagetype`_`sendername`_`receivername`_orig.`suffix` 
+where `messagetype` is `text`, `audio`, or `video`, `sendername` is the user name of the sender, 
+`receivername` is the name of the receiver, and `suffix` is `.txt` for `text` and `.webm` for `audio` and `visual`. 
+Translated versions have the same form, but replace `orig` with `senderlanguage_to_receiverlanguage` 
+where `senderlanguage` is the language of the sender and `receiverlanguage` is the language of the receiver 
+(for example, 'en', 'de', 'fr', 'es', etc.). 
+All messages are currently stored in `project/static/messages/`. 
+Check `project/models.py` and `project/__init__.py` for details of the flask sql alchemy object used.
 
 ## Translation Pipeline
 
